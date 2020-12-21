@@ -16,7 +16,7 @@ function getPersonHtml(person) {
     return `<tr>
                 <td>${person.firstName}</td >
                 <td>${person.lastName}</td>
-                <td><a href="https://github.com/${person.gitHub}">Github</a></td>
+                <td><a target="_blank" href="${person.gitHub}">Github</a></td>
             </tr > `;
 }
 

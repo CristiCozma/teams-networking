@@ -31,7 +31,7 @@ function searchPersons(text) {
     console.warn("search", text, allPersons);
     return allPersons.filter(person => {
         console.info(person.firstName);
-        return person.firstName == text;
+        return person.firstName.indexOf(text) > -1;
     });
 }
 

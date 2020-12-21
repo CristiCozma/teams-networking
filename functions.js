@@ -1,12 +1,15 @@
 console.log('test script')
 
-function insertPersons(data) {
+function insertPersons(persons) {
     const tbody = document.querySelector('#list tbody');
-    tbody.innerHTML = getPersonsHtml(data);
+    tbody.innerHTML = getPersonsHtml(persons);
 }
 
 function getPersonsHtml(persons) {
-    return getPersonHtml(persons[1]) + getPersonHtml(persons[0]);
+    var htmlElements = persons.map(function (person) {
+        return getPersonHtml(person);
+    });
+    return htmlElements.join("");
 }
 
 function getPersonHtml(person) {
@@ -17,7 +20,7 @@ function getPersonHtml(person) {
                 <td>${person.firstName}</td >
                 <td>${person.lastName}</td>
                 <td><a target="_blank" href="${person.gitHub}">Github</a></td>
-            </tr > `;
+            </tr>`;
 }
 
 fetch('persons.json')

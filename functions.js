@@ -36,6 +36,7 @@ function getPersonHtml(person) {
                 <td><a target="_blank" href="https://github.com/${person.gitHub}">Github</a></td>
                 <td>
                     <a href="#" class="delete-row" data-id="${person.id}">&#10006;</a>
+                    
                 </td>
             </tr>`;
 }
@@ -82,22 +83,26 @@ function saveTeamMember() {
     })
         .then(res => res.json())
         .then(r => {
-            console.warn(r);
             if (r.success) {
-                console.info("refresh list");
                 loadList();
             }
         });
 }
 
 function deleteTeamMember(id) {
-    fetch("http://localhost:3000/teams-json/delete", {
-        method: "DELETE",
+    fetch(API.DELETE.URL, {
+        method: API.DELETE.METHOD,
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ id })
-    });
+    })
+        .then(res => res.json())
+        .then(r => {
+            if (r.success) {
+                loadList();
+            }
+        });
 
 }
 

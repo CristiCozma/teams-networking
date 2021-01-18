@@ -17,6 +17,8 @@ const API = {
     }
 };
 
+let editId;
+
 function insertPersons(persons) {
     const tbody = document.querySelector('#list tbody');
     tbody.innerHTML = getPersonsHtml(persons);
@@ -36,7 +38,7 @@ function getPersonHtml(person) {
                 <td><a target="_blank" href="https://github.com/${person.gitHub}">Github</a></td>
                 <td>
                     <a href="#" class="delete-row" data-id="${person.id}">&#10006;</a>
-                    
+                    <a href="#" class="edit-row" data-id="${person.id}">&#9998;</a>
                 </td>
             </tr>`;
 }
@@ -89,6 +91,34 @@ function saveTeamMember() {
         });
 }
 
+function updateTeamMember() {
+    const firstName = document.querySelector("input[name=firstName]").value;
+    const lastName = document.querySelector("input[name=lastName]").value;
+    const gitHub = document.querySelector("input[name=gitHub]").value;
+
+    const person = {
+        id: editId,
+        firstName,
+        lastName,
+        gitHub
+    };
+    console.info("updating...", person, JSON.stringify(person));
+
+    fetch(API.UPDATE.URL, {
+        method: API.UPDATE.METHOD,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: API.UPDATE.METHOD === "GET" ? null : JSON.stringify(person)
+    })
+        .then(res => res.json())
+        .then(r => {
+            if (r.success) {
+                loadList();
+            }
+        });
+}
+
 function deleteTeamMember(id) {
     fetch(API.DELETE.URL, {
         method: API.DELETE.METHOD,
@@ -106,6 +136,20 @@ function deleteTeamMember(id) {
 
 }
 
+function populateCurrentMember(id) {
+    var person = allPersons.find(person => person.id === id);
+
+    editId = id;
+
+    const firstName = document.querySelector("input[name=firstName]");
+    const lastName = document.querySelector("input[name=lastName]");
+    const gitHub = document.querySelector("input[name=gitHub]");
+
+    firstName.value = person.firstName;
+    lastName.value = person.lastName;
+    gitHub.value = person.gitHub;
+}
+
 function addEventListeners() {
     const search = document.getElementById('search');
     search.addEventListener("input", e => {
@@ -118,7 +162,12 @@ function addEventListeners() {
 
     const saveBtn = document.querySelector("#list tfoot button");
     saveBtn.addEventListener("click", () => {
-        saveTeamMember();
+        if (editId) {
+            updateTeamMember();
+        } else {
+            saveTeamMember();
+        }
+
     });
 
     const table = document.querySelector("#list tbody");
@@ -127,6 +176,9 @@ function addEventListeners() {
         if (target.matches("a.delete-row")) {
             const id = target.getAttribute("data-id");
             deleteTeamMember(id);
+        } else if (target.matches("a.edit-row")) {
+            const id = target.getAttribute("data-id");
+            populateCurrentMember(id);
         }
     });
 }
